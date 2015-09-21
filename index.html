@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
     <link rel="stylesheet" href="reveal.js/css/reveal.css">
-    <link rel="stylesheet" href="reveal.js/css/theme/black.css" id="theme">
+    <link rel="stylesheet" href="reveal.js/css/theme/moon.css" id="theme">
 
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
@@ -29,11 +29,358 @@
     <div class="reveal">
         <div class="slides">
             <section>
-                <h1>Test Driven Development</h1>
+                <h2>Test Driven Development</h2>
                 <h3>Ce que c'est et ce que ce n'est pas</h3>
                 <p>
-                    <small>Crée par Bastien DURAND</small>
+                    <small>Par Bastien DURAND</small>
                 </p>
+            </section>
+            <section>
+                <section>
+                    <h2>Introduction</h2>
+                    <aside class="notes">
+                        Je vais parler de ce qu’est le TDD. Une question que j’ai pu souvent lire quand je me suis renseigné sur le TDD est “le test driven development remplace-t-il ou entre-t-il en conflit avec le reste ? Comme le design orientée objet, la refactorisation, ou les méthodes agiles ? ”
+
+                    </aside>
+                </section>
+                <section>
+                    <h3>De quels tests parlons nous?</h3>
+                    <p>test</p>
+                    <p class="fragment" data-fragment-index="0">beta test</p>
+                    <p class="fragment" data-fragment-index="1">performance test</p>
+                    <p class="fragment" data-fragment-index="2">stress test</p>
+                    <p class="fragment" data-fragment-index="3">test d'integration</p>
+                    <p class="fragment" data-fragment-index="3">test de non régrétion</p>
+                    <aside class="notes">
+                        Cette présentation n’a pas pour sujet comment tester un logiciel ou un site au sens large du terme. Et ce parce que tester est un mot vague dans le développement, il y a beaucoup de différents types de tests possibles. Nous avons besoin d’un deuxième mot à coté pour être plus spécifique.
+                        Quelques un des plus connus dans le développement seraient des choses comme beta test pour la mise à disposition d’une version presque finie d’une application à un groupe d’utilisateur, pour voir les problèmes qu’ils rencontrent. Il y a aussi les tests de performance en utilisant des outils de mesure pour vérifier qu’on obtient des temps de réponse acceptables.
+                        <br><br>
+                        Est ce que mon application tourne aussi vite qu’elle devrait, ou du moins aussi vite que nous avons besoin qu’elle tourne ? C’est ce qu’on appelle stress tests, un type de test performance qui nous permet de vérifier comment notre code réagis à la charge, que ce site web fonctionne bien avec une personne le consultant, mais que se passerait il avec 100, 1 000 ou 10 000 personnes en même temps ?
+                        Mais aussi tests d’intégration ou tests de non régrétion.
+                        <br>
+                        Et bien cette présentation n’est sur aucun de ces tests. Nous ne parlerons que des tests unitaires. Des tests que nous faisons en tant que développeurs pas utilisateur final. Nous testons le code lui même, pas simplement le résultat qu’on obtiendrait en cliquant sur un bouton de l’interface utilisateur. Donc c’est à propos de nous, en train de tester des parties individuelles du code. Les plus petits morceaux de logique possible. Nous prouvons qu’une classe fonctionne de la manière dont elle est supposée fonctionner. Mieux que ça, on prouve que chaque méthode fonctionne comme elle le devrait.
+                        <br>
+                        Mais si nous passons une valeur particulière à une méthode particulière, nous aurons un retour spécifique. Et nous allons prouver que c’est vrai. Ce n’est pas le genre de tests où nous agissons comme un utilisateur final de l’application, enfin nous pourrions mais ce sera pour plus tard, parfois bien plus tard. Nous n’avons pas à attendre d’avoir fini notre application, on va pouvoir le faire dès le départ. Nous testons le code en même temps que nous codons. On peut ne pas avoir d’interface utilisateur encore, ni même encore la majorité de nos classes.
+                        <br>
+                        Donc nous avons le code de notre application et enregistré juste à coté, et considéré de manière tout aussi importante, se trouve le code de test simple et répétable. Dit comme ça, ça sonne comme une nouvelle charge énorme de travail additionnel. Mais vraiment, ça ne l’est pas. Comme vous allez le voir les tests s’écrivent de manière simple. Cela exige un minimum de code, une logique minimale pour écrire un test et nous allons le faire de telle sorte que nous pourrons facilement écrire ces tests, les enregistrer et les exécuter de manière répétée par la simple pression d’un bouton.
+                        <br>
+                        Au fur et à mesure du développement de notre application, on écrit nos tests unitaires juste à coté. De cette manière, nous pouvons les exécuter tout au long du développement. On peut les lancer 20 fois, ou même 100 fois par jour ! Maintenant, en plus d’autres bénéfices, avoir des tests automatisés, nous permet de facilement valider que tous les changements que nous faisons à un endroit dans le code, que ce soit demain ou dans 6 mois. On peut donc vérifier que ce changement ne casse rien que nous avons précédemment codé.
+                        <br>
+                        Donc avec le test driven development, nous n’allons pas faire de beta test, stress test ou test de qualités mais des tests unitaires, mais ce n’est pas tout ce que nous allons faire avec le TDD, il y a une idée en plus que nous allons voir.
+                        <br><br>
+
+
+                    </aside>
+                </section>
+
+                <section>
+                    <h3 class="fragment">Le TDD c'est quoi ?</h3>
+                    <aside class="notes">
+                        Cette présentation n’est pas sur les tests unitaires mais bien sur le TDD. Laissez-moi être un peu plus précis, faire des tests unitaires ce n’est pas la même chose que faire du TDD. Voyez vous, c’est génial, très pratique et nous allons écrire ces tests, mais pour faire du TDD, nous allons faire un pas plus loin.
+                    </aside>
+                </section>
+                <section>
+                    <h3 class="fragment" data-fragment-index="3">Tests unitaires - mais pas TDD</h3>
+                    <div style="width: 56%; float: left">
+                        <h4 class="fragment" data-fragment-index="0">&Eacute;tape 1 : &eacute;crire la logique</h4>
+                        <pre class="fragment" data-fragment-index="0">
+<code data-trim contenteditable="true" class="hljs php">
+public function calculateLoan(
+    $amount, $months, $interestRate)
+{
+    // ... some code
+    // ...
+}</code></pre>
+                    </div>
+                    <div style="width: 38%; float: left">
+                        <h4 class="fragment" data-fragment-index="1">&Eacute;tape 2 : &eacute;crire le(s) test(s)</h4>
+                        <pre class="fragment" data-fragment-index="2">
+<code data-trim contenteditable="true" class="hljs php">
+calculateLoan(20000, 60, 5.0);
+// is result 382.02?
+
+calculateLoan(6000, 12, 10.0);
+// is result 527.50?
+</code></pre>
+                    </div>
+                    <aside class="notes">
+                        Donc quelle est la différence ? Et bien quand on rencontre pour la première fois cette idée de tests unitaires automatisés de code pour tester notre code, on pense naturellement qu’on va commencer par écrire un bon morceau de la logique de notre code puis, on écrira nos tests unitaires pour tester et vérifier le code que nous venons d’écrire. Par exemple, on pourrait écrire une méthode appelée calculateLoan. On y ajouterait des fonctionnalités et après l’écriture, et seulement après avoir écrit tout ça, on penserait à créer quelques tests. Quel type de valeur je peux passer et le type de résultat que j’attend ? Et ça c’est du test unitaire. Nous testons et validons une méthode de manière unitaire mais ce n’est pas du test driven development.
+                    </aside>
+                </section>
+                <section>
+                    <h3>Test-Driven Development</h3>
+                    <div style="width: 38%; float: left">
+                        <h4 class="fragment" data-fragment-index="0" data-autoslide="500">&Eacute;tape 1 : &eacute;crire les tests en premier</h4>
+                        <pre class="fragment" data-fragment-index="1" data-autoslide="500">
+<code data-trim contenteditable="true" class="hljs php">
+
+calculateLoan(20000, 60, 5.0);
+// is result 382.02?
+
+calculateLoan(6000, 12, 10.0);
+// is result 527.50?
+</code></pre>
+                    </div>
+                    <div style="width: 56%; float: left">
+                        <h4 class="fragment" data-fragment-index="2" data-autoslide="500">&Eacute;tape 2 : &eacute;crire la logique</h4>
+                        <pre class="fragment" data-fragment-index="3">
+<code data-trim contenteditable="true" class="hljs php">
+public function calculateLoan(
+    $amount, $months, $interestRate)
+{
+    // ... some code
+    // ...
+}</code></pre>
+                        </div>
+                    <aside class="notes">Il faut comprendre que le TDD à les mêmes éléments, un code logique et un test pour cette logique mais on inverse complètement le processus. Ce que le TDD demande à nous développeurs, c’est d’écrire les tests en premier, avant d’écrire la logique de l’application.
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <h3 class="fragment">Questions et pr&eacute;occupations</h3>
+                    <aside class="notes">Cela peut paraitre contre intuitif, si ce n’est impossible ! Mais Bastien j’entends ce que tu dis mais comment je eux tester une méthode que je n’ai pas encore écrite ?
+                        En fait on peut ! et en TDD, on le fait, et pas seulement une ou deux fois mais on le fait tout le temps. On va écrire un test qui essaye d’instancier un objet dont nous n’avons pas encore crée la classe. On va créer un test pour une méthode qui n’existe pas encore et on va lancer ces tests. Et la première fois que nous allons lancer ces tests, ils doivent rater, en fonction du langage, ils pourraient même refuser de compiler. Ils pourraient encore se lancer puis finir par nous dire que telle méthode n’existe pas ou qu’il est impossible de trouver cette classe.
+                        Mais nous voulons que ces tests plantent. Parce que s’ils ne plantent pas, on a peut-être d’autres problèmes sous le capot, et ça c’est le premier pas fondamental dans le test driven development. La différence entre faire du TDD et ne pas faire de TDD c’est qu’avant d’écrire n’importe quel morceau de code, on commence par écrire un test qui plante, puis après et seulement après qu’il ai planté, on écrit la logique pour passer le test. Juste le minimum nécessaire pour passer le test.
+                        Ce que ca retire immédiatement, et une situation qui peut arriver souvent est lors de la création d’une classe ou d’une méthode, se retrouver coincé devant sont écran vide en train de penser et essayer d’imaginer tout ce dont nous allons avoir besoin aujourd’hui, demain ou plus loin dans le future.
+
+                        Tout ce code spéculatif qui se trouve au final être comme des sables mouvant pour le développeur. Maintenant, juste passer le test, ce seul test. Ça nous garde concentré, ce que nous faisons reste clair en tout point. Ne rien faire de plus que passer ce simple test et c’est ça que ca veut dire test driven development. Les tests guident notre développement.
+                        Le TDD n’est donc pas juste l’écriture de ces tests unitaires, mais le TDD est un processus de développement et la technique se base autour de la priorité et de la position que nous donnons à ces tests unitaires.
+
+                        Maintenant sachez que je vais prendre une approche TDD des tests unitaires, renverser l’idée du test après coup, quelque chose qu’on fait plus tard pour mettre les tests avant tout. Y penser avant le reste, les laisser guider(drive) ce que vous aller écrire. C’est un changement subtil qui a un impacte énorme sur notre approche et la manière de coder.
+                        Le but est donc d’automatiser des tests unitaires, avoir une approche systématique, répétable qui est totalement intégrée dans nos projets et avec le TDD, nous allons laisser ces tests guider tous ce que nous faisons.
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <blockquote class="fragment">&ldquo;Le TDD s'applique-t-il à tout?&rdquo;</blockquote>
+                    <aside class="notes">En fonction de votre expérience, vous devez avoir quelques questions et/ou à priori sur le TDD. Dans certains cas il peut y avoir une certaine réticence même mais c’est normal, on parle de manière complètement différente de travailler. C’est un peu comme conduire pour la première fois une voiture de l’autre coté de la route. On fait toujours les mêmes choses, mais tout semble un peu étrange.
+
+                        Donc on va essayer de passer outre ces appréhensions et on va essayer de ne pas se dire que ça ne s’applique pas à moi, le « je ne comprend pas bien ce que c’est que le TDD mais je suis presque sûr que ce ne fonctionnera pas pour mon projet, mon équipe ou mon environnement »
+
+                        Pour commencer, ce qu’il faut c’est essayer, prendre le temps de faire une période d’essai. Au bout d’un petit moment, on tout le monde fini par se rendre compte que ce n’est pas ce qu’on pensait. Et finalement, je vois en quel point ça peut être utile.
+
+                        Certain pourraient dire aussi que le TDD ne s’applique pas à tout, et à ça je peux maintenant vous dire que non. Il y a certains problèmes en programmation où les tests unitaires ne sont pas la seule chose qui permet de garantir que le code fonctionne comme on l‘entend. Certaines situations comme le multi-threading, les tests de sécurité ou une interface utilisateur.
+                        Mais gardez en tête que les tests unitaires ne remplacent pas les autres types de tests et ce n’est pas son but. Et même si ces tests ne s’appliquent pas à 100% de votre code, ils peuvent encore être utiles à 80 voir 90% de celui-ci.
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <blockquote class="fragment">&ldquo;Dois-je &eacute;crire <i>tous</i> mes tests en premier ?&rdquo;</blockquote>
+                    <aside class="notes">Une autre question qu’on peu se poser est « Suis-je sensé écrire tous mes tests avant d’écrire un seul morceau de code ? ». Et bien non, pas du tout même. Si vous pensez que, par exemple, en Janvier, vous devez écrire tous les tests de votre application, une grosse fête du test et en Février on comme à écrire du code et bien vous en êtes très loin !
+                        Ce n’est même pas Lundi écrire un test, Mardi écrire le code pour passer le test. Non, c’est plutôt Lundi 10h, écrire un test. Lundi 10h et 20s, voir ce test échouer. Lundi 10h et 30 secondes, commencer à écrire le code pour passer le test. De très petites étapes répétées souvent. Créer des tests n’est et ne devrait jamais être
+                        Comme la pose d’une pierre angulaire, une barrière ou ralentir l’écriture de votre code. Ça doit être la plus petite dose de travail possible.
+                        Vous être sur le point d’écrire une nouvelle méthode. Faites une pause, prenez quelques secondes et pensez à la manière dont vous pouvez appeler cette méthode pour prouver qu’elle fonctionne ou ne fonctionne pas ? Et à ce moment, vous devez écrire ce test. Vous pouvez alors vérifier que le test ne passe pas, et vous allez pouvoir maintenant passer à l’écriture.
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <blockquote class="fragment">&ldquo;Nous avons des testeurs, doivent-<i>ils</i> &eacute;crire ces tests ?&rdquo;</blockquote>
+                    <aside class="notes">Maintenant une autre question, « Si on a une équipe de testeurs, est-ce à eux d’écrire les tests ? », et bien non, comme on l’a dit juste avant, on parle du plus bas niveau de la piste, de la programmation au jour le jour, voir minutes à la minute. Donc si vous écrivez du code, c’est à vous d’écrire le test. Utiliser les tests d’une autre serait beaucoup trop long à implémenter et serais une trop grande perte de temps. Donc vous pouvez garder votre équipe de test pour ce à quoi elle est dédiée, probablement des tests de qualités ou performance.
+                    </aside>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2 class="fragment">Pour commencer</h2>
+                    <aside class="notes">La plus grande des raisons que j’ai pu voir est une fausse raison. La logique du tout ou rien, que vous pouvez entendre aussi de personnes parlant de scrum ou autres méthodes agile, ou bien encore des designs pattern ou tout autre technique de développement « Oh les fanboys du TDD disent que ca règle tous les problèmes et moi je sais que non, alors je ne vais pas l’utiliser. » ce qui est un peu comme dire que les anesthésiques ne règles pas tous les problèmes de médecine alors on ne vas pas les utiliser du tout.
+                        Et bien c’est vrai, oui le TDD ne règle pas tous les problèmes, mais c’est très utile de l’avoir dans certains cas. Donc je peux le dire maintenant, et peut être faire des heureux, Je vous garanti que le TDD ne règlera pas à lui tout seul tous vos problèmes de développements. Mais je vous assure que la programmation objet non plus, que les designs pattern non plus, que les méthodes agiles non plus. Mais je vous assure que toutes ces compétences sont bonnes à avoir. Elles sont bonnes pour vos capacités de développement, vos compétences et dans la confiance dans ce que vous faites. C’est donc bon pour votre carrière  Il n’y a tout simpelment aucun inconvénient à connaître la manière de faire du TDD.
+                        <br><br>
+                        Aller, je pense que ça suffi pour l’intro, entrons maintenant dans le cœur du sujet</aside>
+                </section>
+                <section>
+                    <h3>Les frameworks de tests unitaires</h3>
+                </section>
+                <section>
+                    <pre class="fragment">
+<code class="hljs java" contenteditable="true" data-trim>
+class Tester {
+    //example
+    MyClass obj = new MyClass();
+    int result = obj.someMethod();
+    if ( result > 50 ) {
+        log("success!");
+    } else {
+        log("test failed!");
+    }
+}
+</code>
+                    </pre>
+                    <aside class="notes">
+                        Donc dans l’idée, pour tester du code on écrit du code, ca pourrais vouloir dire que j’ai une classe à tester, j’écris une autre classe. J’instancie cette nouvelle classe que je viens d’écrire, j’appelle une méthode de ce nouvel objet je vérifie le résultat et écris une condition qui me renverrai un message quel que soit le résultat. On pourrait faire ça, c’est du code assez simple.
+                    </aside>
+
+                </section>
+                <section>
+                    <img src="images/phpunit.png" alt="phpunit homepage" class="fragment">
+                </section>
+                <section>
+                    <img src="images/junit.png" alt="phpunit homepage" class="fragment">
+                </section>
+                <section>
+                    <img src="images/nunit.png" alt="phpunit homepage" class="fragment">
+                    <aside class="notes">Ce sont des librairies de code déjà écrites, déjà éprouvée qui nous aident à automatiser nos tests unitaires. Ils fournissent le gros des bases, la duplication que nous aurions dû réécrire sans eux. Maintenant, il est facile d’imaginer que si vous apprenez à faire vos tests en PHP, et que vous ayez à passer à du .Net, il faudrait tout réapprendre.
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <p class="fragment"><span style="font-weight: bold;">SUnit</span><br/><span style="font-size: smaller;">Smalltalk</span></p>
+                    <p class="fragment"><span style="font-weight: bold;">JUnit</span><br/><span style="font-size: smaller;">Java</span></p>
+                    <p class="fragment"><span style="font-weight: bold;">NUnit</span><br/><span style="font-size: smaller;">.Net</span></p>
+                    <p class="fragment"><span style="font-weight: bold;">CppUnit</span><br/><span style="font-size: smaller;">C++</span></p>
+                    <p class="fragment"><span style="font-weight: bold;">OCUnit</span><br/><span style="font-size: smaller;">Objective-C</span></p>
+                    <p class="fragment"><span style="font-weight: bold;">PHPUnit</span><br/><span style="font-size: smaller;">PHP</span></p>
+                    <p class="fragment" style="font-size: small">(etc...)</p>
+                    <aside class="notes">Mais par chance, ce n’est pas le cas et c’est pour ça que même si cette présentation montrera des exemples en PHP, elle est applicable à bien d’autres langages. Et ceci vient du fait que beaucoup de ces framework sont basés sur la même idée, le même ancêtre commun. Du coup il y a beaucoup de point commun entre les tests unitaires en PHP, Java, .Net ou même C++ et bien d’autre.
+                        Et donc tout ça, c’est dû à l’historique ! C’est dans les année 90 que Kent Beck a développé un framework de test simple connu maintenant sous le nom de SUnit écris pour le langage Smalltalk.
+                        Ce code à mis à disposition une base de code pour simplement créer et lancer des tests sans faire de duplication nécessaire de code. SUnit n’est pas une librairie complexe ni même lourde mais elle définie des termes et concepts qui sont passés dans le langage courant du test unitaire. Des mots comme fixtures, et les concepts de setUp et tearDown.
+                        La librairie est devenue tellement populaire qu’elle a été portée dans une version pour Java, JUnit qui est encore maintenant le framework le plus populaire et le plus largement utilisé. Devant le succès de JUnit, la librairie a été déclinée dans plein d’autres langages, .Net(NUnit), C++(CppUnit), PHP(PHPUnit) il y a même une version pour Objective-C(OCUnit), et bien d’autres.
+                        Tous ces frameworks partagent la même idée principale sur comment créer, lancer et gérer l’automatisation des tests unitaires. Il y a maintenant des dizaines et des dizaines de framework pour chaque langages. Il y en a mêmes quelques un qui se font concurrence sur le même langage</aside>
+                </section>
+                <section>
+                    <iframe class="fragment" width="100%" height="700px" src="https://en.wikipedia.org/wiki/List_of_unit_testing_frameworks"></iframe>
+                    <aside class="notes">Si on jette un œil à la page wikipedia de la liste des frameworks de test unitaire, on peut y trouver plusieurs frameworks pour chaque langage. Certain respecte les idées implémentées dans SmallTalk et d’autres non.
+                    </aside>
+                </section>
+                <section data-transition="zoom">
+                    <p><span style="font-weight: bold;">SUnit</span><br/><span style="font-size: smaller;">Smalltalk</span></p>
+                    <p><span style="font-weight: bold;">JUnit</span><br/><span style="font-size: smaller;">Java</span></p>
+                    <p><span style="font-weight: bold;">NUnit</span><br/><span style="font-size: smaller;">.Net</span></p>
+                    <p><span style="font-weight: bold;">CppUnit</span><br/><span style="font-size: smaller;">C++</span></p>
+                    <p><span style="font-weight: bold;">OCUnit</span><br/><span style="font-size: smaller;">Objective-C</span></p>
+                    <p><span style="font-weight: bold;">PHPUnit</span><br/><span style="font-size: smaller;">PHP</span></p>
+                    <p style="font-size: small">(etc...)</p>
+                    <aside class="notes">Pour regrouper sous un même nom l’ensemble des framework partageant cette idée, on utilise le nom xUnit. Et cette présentation va utiliser les idées xUnit.
+                    </aside>
+                </section>
+                <section data-transition="zoom">
+                    <p style="font-size: xx-large; font-weight: bold;">xUnit frameworks</p>
+                    <aside class="notes">Il faut savoir que tous les tests ne sont pas xUnit. La plupart du temps oui mais ce n’est pas universel. Je ne vais pas comparer les différents frameworks ou même type. Je vous laisse la tache si vous le souhaitez.</aside>
+                </section>
+                <section>
+                    <iframe class="fragment" width="100%" height="700px" src="https://en.wikipedia.org/wiki/List_of_unit_testing_frameworks#PHP"></iframe>
+                    <aside class="notes">Même si la culture autour du test unitaire commune à travers les langages, la culture du test reste assez disparate. En effet, vous ne rencontrerez certainement jamais un développeur java qui ne saurait pas utiliser JUnit. Mais quand on fait du PHP, c’est assez commun.
+                        Dans la plupart des langages, le framework de test unitaire est intégré soit directement au langage soit à l’IDE, ce qui permet de commencer assez rapidement sans avoir à installer ou télécharger quoi que ce soit.
+                        Un exemple est java avec éclipse. Il me semble que visual studio et le C# ou VB.Net intègrent nativement le framework. Même XCode l’intègre depuis 2005.
+                        <br><br>
+                        Avec PHPUnit, plusieurs choix possibles, télécharger une archive PHAR ou utiliser composer.
+                    </aside>
+                </section>
+                <section>
+                    <h3>Comprendre les assertions</h3>
+                    <aside class="notes">Question, y a-t-il parmi vous qui n’ont jamais écris de tests unitaires ? Ou qui veulent un petit rappel sur certains points de vocabulaire ?
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <h4>Assertions JUnit framework</h4>
+                    <pre class="fragment"><code>assertEquals(arg1, arg2);
+        assertEquals(1, 1); //pass do nothing
+        assertEquals(1, 2); //fail, error</code></pre>
+                    <pre class="fragment"><code>assertArrayEquals(array1, array2);</code></pre>
+                    <pre class="fragment"><code>assertNotNull(obj1);</code></pre>
+                    <pre class="fragment"><code>assertNull(obj1);</code></pre>
+                    <pre class="fragment"><code>assertSame(obj1, obj2);</code></pre>
+                    <pre class="fragment"><code>assertTrue(condition);</code></pre>
+                    <pre class="fragment"><code>assertFalse(condition);</code></pre>
+                    <aside class="notes">Ok donc parlons un petit peu des mots basiques pour comprendre la suite, on va commencer par le plus basique d’entre eux qui est « assertion ». Une assertion c’est dire que quelque chose est considéré comme vrai. J’affirme que la terre tourne autour du soleil, je ne pose pas la question, ce n’est pas une déclaration conditionnelle, pas une opinion. Je n’essai pas de modifier ou changer quoi que ce soit. Je ne fais que dire que quelque chose est vrai.
+                        Ces assertions peuvent être positives. J’affirme que quelque chose est vrai. J’affirme qu’il y a 30 jours au mois d’Avril.
+                        Mais les assertions peuvent aussi être négatives, j’affirme que ce n’est pas J.R.R. Tolkien qui a écris 1984. Je ne présente aucune opinion, je donne des faits.
+                        Maintenant il ce pourrait qu’une de mes assertions soit fausse mais dans ce cas, il y a un gros problème avec ce que je vous raconte.
+                        On prend cette idée et on l’applique à notre code, on peut avoir des assertions n’importe ou dans le code. A cet endroit du code, j’affirme que ces deux chaines de caractère sont égales. A cet autre endroit, j’affirme que cet entier est positif, A cet endroit là, j’affirme que cet objet n’est pas nul. Je ne pose aucune question.
+                        <br>
+                        Comme je l’ai dit tout à l’heure, je n’essaye pas de modifier quoi que ce soit, ou donner mon opinion, je ne fais qu’affirmer que quelque chose est vrai. Une assertion est comparable à un « sanity check » de votre code. Une manière simple de mettre un flag à un endroit pour dire explicitement que nous avons à cet endroit du code l’assurance de ce qui est vrai.
+                        Mais n’est-ce pas ce que vous faites déjà avec des if ou switch un peu partout dans votre code ? Et bien nous ne parlons pas du workflow général du programme, nous ne parlons pas non plus de la gestion des erreurs ou des exceptions. Vous continuerez à faire ces choses-là.
+                        <br>
+                        Mais les les assertions sont différentes, si une assertion n’est pas valide, c’est que notre code est cassé. Quelque chose ne va pas et vous devez le corriger maintenant. Vous devez trouvez pourquoi l’assertions que vous avez faite n’est pas vrai. Si une assertion échoue, ce n’est pas une belle gestion d’erreur qu’il faut prévoir mais c’est une raison pour que votre code plante immédiatement à cette ligne. On ne veut surtout pas pouvoir continuer en allant plus loin dans le code car la logique de départ est déjà bancale, on risquerait de se retrouver avec des incohérences et ne s’en rendre compte que bien plus tard. C’est pourquoi on doit planter le plus rapidement possible. Sinon on passera un temps monstre pour remonter jusqu’à la source du problème. Donc plus tôt on repère l’erreur et plus vite on peut la réparer.
+                        <br>
+                        Les assertions ne sont pas faites pour gérer des situation complexes comme on pourrait le faire avec les exceptions ou la gestion des erreurs et on n’utilise pas non plus les assertions pour diagnostiquer une boite de dialogue destiné à l’utilisateur final. Les assertions ne sont pas pour les ingénieurs, mais ce n’est utile que pour le développeur. Le code de test sera toujours séparé du code de l’application car l’utilisateur final ne doit jamais voir l’effet d’une assertion dans votre code.
+                        Il n’y a que deux options possibles pour une assertion, soit elle est vrai et dans ce cas, rien ne se passe. Pas de message, c’est ce qu’on attend, c’est notre business normal. En revanche, si l’assertion est fausse, il y a un très gros problème, tout doit s’arrêter, échouer, échouer immédiatement. Et donc on va rapidement voir comment de suite.
+                        <br><br> exemples
+                    </aside>
+                </section>
+                <section>
+                    <h3>Créer un test</h3>
+                </section>
+                <section data-transition="fade">
+                    <img class="fragment" src="images/blank-page.jpg" alt="blank-page">
+                    <aside class="notes">Je vais démarrer par un projet vide avec en tête l’approche en TDD pour écrire un test avant le code applicatif.
+                        Donc je prends mon projet blanc, aucun code d’écrit et nous avons en tête une application très simple de banque. Un peu classique mais le but n’est pas de faire le projet le plus cool qui soit mais ici, je cherche juste à avoir un projet ou les idées seront claires qu’on puisse se concentrer sur notre sujet.
+                        Un compte bancaire tout le monde comprend les concepts clés comme la balance, les retraits ou les dépôts.
+                        Si vous avez déjà jetté des idées sur un papier ou même commencé à ébaucher des diagrammes UML, ou même des cas d’usage, c’est bien car vous pourrez vous appuyer là dessus pour et il sera plus facile d’écrire vos tests.
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <img class="" src="images/uml.png" alt="bankAccount UML diagram">
+                    <aside class="notes">Aller c’est parti, imaginez le plus simple compte des comptes en banque du monde. Une version UML de ca pourrait-être celle là, juste un champ pour stocker la balance et une méthode permettant de déposer de l’argent, une pour en retirer. Et oui il pourrait y avoir bien plus de choses que ça mais on va s’en contenter pour le moment. Et vu la simplicité je suis sûr que vous sauteriez sur votre IDE et coderiez directement toute la classe d’une traite.
+                        Mais avant de commencer, à quoi pourrait bien ressembler un test pour cette classe ?
+                        Pensez donc à comment prouver que la méthode qu’on va créer fonctionne ?
+                        On va donc noter quelques petites choses dans un coin,
+                        On créer une classe BankAccont, on peut donc ensuite appeler la méthode deposit et lui passez disons 50. Vérifier que la balance est égale à 50. Puis on retire 30, donc notre balance doit maintenant être égale à 20.
+                        Notre test n’est donc pas juste suis-je capable d’appeler la méthode deposit, ou la méthode withdraw.
+                        C’est est ce que cet appel à fonctionné ? Est-ce qu’après un dépôt de 50, la balance est de 50, après un retrait de 30 la balance est de 20. On prend juste quelques secondes avant de commencer et non vous n’êtes bien entendu pas obligé d’écrire tout ça avant de commencer là je ne fais que vous écrire le processus
+
+                        Cependant, en fonction de la complexité du problème business que vous allez essayer de résoudre, vous pouvez bien entendu prendre quelques notes afin de ne rien oublier. Si j’ai une question qui me viens je l’écris pour y revenir plus tard, le but étant de rester concentré sur notre première tache, créer un nouvel objet et s’assurer que la méthode deposit fonctionne correctement.
+                        Donc c’est parti, faisons un peu de Test Driven Development, écrivons un test qui plante pour ensuite pouvoir passer le test.
+                    </aside>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h2>Travailler avec les tests</h2>
+                </section>
+                <section>
+                    <h3>Le processus du TDD</h3>
+                </section>
+                <section data-transition="fade">
+                    <img class="fragment" src="images/tdd.png" alt="">
+                    <aside class="notes">
+                        Il y a plusieurs manière d'expliquer les idées basique du tdd.
+                        Une phrase comme pourrait-etre Rouge-Vert-Refactorisation pourrait être bon résumé.
+                        <br/>Rouge faite planter le test,
+                        <br/>Vert, Faite passer le test,
+                        <br/>Refactorisation, arranger.
+                        <br/> Et ce n'est pas fait qu'une seule fois.
+                    </aside>
+                </section>
+                <section data-transition="fade">
+                    <img src="images/tdd-cycle.png" alt="" class="">
+                    <aside class="notes">
+                        C'est un cercle répété tout au long du developpement, de la durée de vie du projet.
+                    </aside>
+                </section>
+                <section>
+                    <h3>TDD en détail</h3>
+                    <ol>
+                        <li class="fragment">&Eacute;crire un test</li>
+                        <li class="fragment">Regarder le test planter</li>
+                        <li class="fragment">&Eacute;crire le code logique, aussi simple que possible</li>
+                        <li class="fragment">Passer le test</li>
+                        <li class="fragment">Refactoriser le code</li>
+                        <li class="fragment">Passer de nouveau le test</li>
+                    </ol>
+                    <aside class="notes">
+                        Pour détailer un peu plus, et découper ca en 6 étapes, <br/>
+                        1. on écrit un test, <br/>
+                        2. on vois notre barre rouge,<br>
+                        3. on essai de faire passer le test avec le moins de code possible,  la manière la plus simple possible<br/>
+                        4. on passe récupere notre barre verte<br>
+                        5. maintenant on refactorise, on formate correctement le code, on réarrange les fichiers et on retire tout ce qui est duplication.<br>
+                        6. aprés la refacto, on vérifi qu'on a toujours notre barre verte <br>
+
+                        Dans l'idée c'est donc un test puis un tout petit morceau de code, puis on réarrange et on recommence, on répète cette opération continuellement avec toujours un minimum de code.
+                        <br>
+                        en tdd on passe notre temps à switcher entre nos teste et notre code applicatif.
+                        <br>
+                    </aside>
+                </section>
+                <section>
+                    <h3>Ajout de tests et suppression de la duplication</h3>
+                    <p>Demo</p>
+                    <aside class="notes">Maintenant qu'on sait comment fonctionne le tdd, on va pouvoir commencer à écrire nos tests. <br>
+                    Demo</aside>
+                </section>
+            </section>
+            <section>
+                <h2>Recommandations et conclusion</h2>
+                <aside class="notes">
+                    Si vous décidez d'utiliser cette méthode, prenez le temps de bien lire avant les subtilitées. Aujorud'hui vous avez pu voir les règles générales.
+                    Je le redis en conclusion mais le TDD n'est pas la solution à tous les problèmes, c'est une manière de développer qui ne rentre pas en contradiction avec les autres méthodes.
+                    L'avantage c'est aussi que votre code se retrouve correctement testé.
+                </aside>
             </section>
         </div>
     </div>
@@ -45,11 +392,13 @@
         // Full list of configuration options available at:
         // https://github.com/hakimel/reveal.js#configuration
         Reveal.initialize({
+            width: 1150,
+            height: 800,
             controls: true,
             progress: true,
             history: true,
             center: true,
-            transition: 'slide', // none/fade/slide/convex/concave/zoom
+            transition: 'concave', // none/fade/slide/convex/concave/zoom
             // Optional reveal.js plugins
             dependencies: [
                 { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
