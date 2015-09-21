@@ -1,0 +1,8 @@
+Creer la classe BankAccount
+
+appeler deposit et déposer 50
+check balance à 50
+
+utiliser withdraw avec 30
+check balance 20
+
